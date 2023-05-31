@@ -36,16 +36,23 @@ class classify():
         self._num_clusters = num_clusters
         self._is_english = is_english
         self.cumstom_lexicon()
+        # Initialize the sentiment analyzer
+        sia = SentimentIntensityAnalyzer()
+        # update the sentiment lexicon
+        sia.lexicon.update(self._custom_lexicon)
+        self._sia = sia
+
     def _read_file(self,file_path):
         with open(file_path, 'r') as file:
             contents = file.read()
         return contents
+
     def parsing(self):
         data = []
         txt_file = self._file_in
         csv_file = 'preprocessesd.csv'
         lines = txt_file.split('\n')
-        # Use a defaultdict to group values by key
+        # Use a default-dict to group values by key
         from collections import defaultdict
         grouped_data = defaultdict(list)
 
@@ -95,9 +102,7 @@ class classify():
         return custom_lexicon
 
     def score_calculator(self, text: str) -> dict[str, float]:
-        sia = self._sia
-        sentiment_score = sia.polarity_scores(text)
-        return sentiment_score
+        return self._sia.polarity_scores(text)
     
     def sentiment_ana(self):
         file = self._preprocessed
@@ -105,21 +110,16 @@ class classify():
         sentiment_data = df['description']
         scores = []  # Array to store computed scores
         senti_array = []
-        # Initialize the sentiment analyzer
-        sia = SentimentIntensityAnalyzer()
-        # update the sentiment lexicon
-        sia.lexicon.update(self._custom_lexicon)
-        self._sia = sia
 
         for i, description in enumerate(sentiment_data):
             # if it's english, then no need to translate it
             if self._is_english:
                 translator = Translator()
-                translated_text = translator.translate(description, timeout=20)
+                description = translator.translate(description, timeout=20)
                 # print(translated_text.text) #for debug use
 
             # Analyze the sentiment of the text
-            sentiment_scores = sia.polarity_scores(translated_text.text)
+            sentiment_scores = self.score_calculator(description.text)
             # Store the data into the csv
             computed_score = self.compute_sentiment(sentiment_scores)
             scores.append(computed_score)
