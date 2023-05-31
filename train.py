@@ -24,14 +24,13 @@ class train():
         self.optimizer = flax.optim.Adam(learning_rate = learning_rate).create(model)
         self.batch_size = batch_size
 
-    def one_hot_encoder(self,y_in):
+    def one_hot_encoder(self,y_in)->np.array:
 
 
-    def _cross_entropy_loss(self,y_pred, y_train):
+    def _cross_entropy_loss(self,y_pred, y_train) -> float:
         # retrieves the number of dims of y predicted
         num_examples = y_pred.shape[0]
         y_true_onehot = self.one_hot_encoder(y_pred)
-
 
 
     def loss_fn(self,batch):
