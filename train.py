@@ -7,6 +7,9 @@ import pandas as pd
 # from sklearn.preprocessing import OneHotEncoder
 import tensorflow_probability.python.internal.backend.jax.nn as jax_nn
 
+import meta_parameters
+import helper
+
 
 # define the network
 class MLP(nn.Module):
@@ -21,10 +24,10 @@ class MLP(nn.Module):
         return self.dense2(x)
 
 
-class trainer():
+class trainer:
     # score shall be a list of tuple
     def __init__(self, train_csv_path,
-                 model, learning_rate=0.01, batch_size=10):
+                 model, learning_rate=meta_parameters.learning_rate, batch_size=10):
         self.model = model
         # manually parse x and y for train
         self.preprocess(train_csv_path)
@@ -39,7 +42,7 @@ class trainer():
         y_t = temp_yTrain['ORGAN_RATING_CONTENT']
         x_train = temp_xTrain.tolist()
         x = []
-        for
+        # for
         y_train = self.one_hot_encoder(y_t.tolist())
         self._x_train = x_train
         self._y_train = y_train

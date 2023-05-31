@@ -19,7 +19,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from collections import OrderedDict
 
 import torch.nn as nn
-import csv
+
 import pandas as pd
 import tensorflow as tf
 import jieba
@@ -27,6 +27,8 @@ import transformers
 import numpy as np
 import train
 import helper
+
+
 # Define the list of descriptions
 epsilon = 0.01
 _custom_lexicon = {
@@ -85,7 +87,7 @@ class classify():
         # remove duplicate
         data_processed = [(key, ' '.join(values)) for key, values in grouped_data.items()]
         with open(csv_file, 'w', newline='') as file:
-            writer = csv.writer(file)
+            writer = helper.csv.writer(file)
             writer.writerow(['stock', 'description'])
             for entry in data_processed:
                 writer.writerow(entry)
