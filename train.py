@@ -33,11 +33,13 @@ class trainer():
 
     def preprocess(self, csv_path):
         df = pd.read_csv(csv_path)
-        temp_xTrain = score
+        temp_xTrain = df['TITLE']
         temp_yTrain = df[df['ORGAN_RATING_CONTENT'].isin(['强裂推荐', '强推', '谨慎推荐', '中性',
                                                           'sell', '卖出', 'SELL', 'Neutral', '减持', 'Reduce'])]
         y_t = temp_yTrain['ORGAN_RATING_CONTENT']
         x_train = temp_xTrain.tolist()
+        x = []
+        for
         y_train = self.one_hot_encoder(y_t.tolist())
         self._x_train = x_train
         self._y_train = y_train

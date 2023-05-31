@@ -43,29 +43,25 @@ _custom_lexicon = {
     'strong': 15
 }
 
+
+
 class classify():
 
-    def __init__(self, file_in, trainer_in, num_clusters = 3, is_english=False, mode = 'simple'):
+    def __init__(self, file_in, trainer_in, num_clusters=3, is_english=False, mode='simple'):
         self._file_path = file_in
-        self._file_in = self._read_file(file_in)
+        self._file_in = _read_file(file_in)
         self._num_clusters = num_clusters
         self._is_english = is_english
-        self.cumstom_lexicon()
+        self.custom_lexicon()
         # Initialize the sentiment analyzer
         sia = SentimentIntensityAnalyzer()
         # update the sentiment lexicon
-        sia.lexicon.update(self._custom_lexicon)
+        sia.lexicon.update(self._custom_lexicon_)
         self._sia = sia
         # set to simple algorithm by default
         self._mode = mode
         # define the trained model
         self._model = trainer_in
-
-
-    def _read_file(self, file_path):
-        with open(file_path, 'r') as file:
-            contents = file.read()
-        return contents
 
     def parsing(self):
         data = []
@@ -97,18 +93,8 @@ class classify():
         return csv_file
 
     # customize sentiment lexicon with biased words
-    def cumstom_lexicon(self):
-        custom_lexicon = _custom_lexicon
-        for word in list(custom_lexicon.keys()):
-            sentiment_score = custom_lexicon[word]
-            synonyms = []
-            for synset in wordnet.synsets(word):
-                for lemma in synset.lemmas():
-                    synonyms.append(lemma.name())
-            for synonym in synonyms:
-                custom_lexicon[synonym] = sentiment_score
-        self._custom_lexicon = custom_lexicon
-        return custom_lexicon
+    def custom_lexicon(self):
+        self._custom_lexicon_ = _custom_lexicon_fn()
 
     def score_calculator(self, text: str) -> dict[str, float]:
         return _score_calculator(self._sia, text)
@@ -258,7 +244,7 @@ class classify():
 
     def debug(self):
         self.parsing()
-        self.cumstom_lexicon()
+        self.custom_lexicon()
         self.sentiment_ana()
         self.sort_result()
         self.cluster()
@@ -273,6 +259,23 @@ def _score_calculator(sia, text: str) -> dict[str, float]:
 def _score_processor(dict: dict[str, float]) -> tuple[float, ...]:
     return tuple(dict.values())
 
+
+def _custom_lexicon_fn():
+    custom_lexicon = _custom_lexicon
+    for word in list(custom_lexicon.keys()):
+        sentiment_score = custom_lexicon[word]
+        synonyms = []
+        for synset in wordnet.synsets(word):
+            for lemma in synset.lemmas():
+                synonyms.append(lemma.name())
+        for synonym in synonyms:
+            custom_lexicon[synonym] = sentiment_score
+    return custom_lexicon
+
+def _read_file(file_path):
+    with open(file_path, 'r') as file:
+        contents = file.read()
+    return contents
 
 def print_csv(file_path):
     with open(file_path, 'r') as file:
