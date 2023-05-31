@@ -13,7 +13,7 @@ import tensorflow as tf
 class MLP(nn.Module):
     def __init__(self, input_dim, output_dims):
         self.dense1 = nn.Dense(features=8, kernal_init=nn.initializers.xavier_uniform(), activation=nn.relu)
-        self.dense2 = nn.Dense(features=5, kernel_init=nn.initializers.xavier_uniform(), activation=nn.softmax)
+        self.dense2 = nn.Dense(features=5, kernel_init=nn.initializers.xavier_uniform(), activation=nn.relu)
         self._input_dim = input_dim
         self._output_dims = output_dims
 
