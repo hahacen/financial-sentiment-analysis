@@ -17,13 +17,17 @@ class MLP(nn.Module):
         return self.dense2(x)
 
 class train():
-    def __init__(self,x_train, y_train, model, learning_rate, batch_size=10):
+    def __init__(self,train_csv, model, learning_rate=0.01, batch_size=10):
         self.model = model
-        self.x_train = x_train
-        self.y_train = y_train
+        # self.x_train = x_train
+        # self.y_train = y_train
+        # TODO: manually parse x and y for train
         self.optimizer = flax.optim.Adam(learning_rate = learning_rate).create(model)
         self.batch_size = batch_size
 
+
+    def preprocess(self,words):
+        temp_yTrain =
     def one_hot_encoder(self,y_in)->np.array:
 
 

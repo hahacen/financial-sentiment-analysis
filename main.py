@@ -25,12 +25,12 @@ import tensorflow as tf
 import jieba
 import transformers
 import numpy as np
-
+import train
 # Define the list of descriptions
 epsilon = 0.01
 class classify():
 
-    def __init__(self, file_in, num_clusters):
+    def __init__(self, file_in, num_clusters,):
         self._file_path = file_in
         self._file_in = self._read_file(file_in)
         self._num_clusters = num_clusters
@@ -169,6 +169,7 @@ class classify():
         else:
             return senti_scores['neg'] * senti_scores['compound'] + senti_scores['neu'] * 0.05
 
+
     def train_nn(self):
         model = train.MLP(4, self._num_clusters)
         params = model.init({"params": np.ones((4,))})
@@ -263,6 +264,7 @@ def print_csv(file_path):
 
 
 if __name__ == '__main__':
+    trainer = train(train.MLP,'train.csv')
     classifer = classify('咨询titles.txt',2)
     classifer.debug()
     # classifer.run()
