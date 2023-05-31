@@ -65,13 +65,6 @@ class trainer():
             # set the index of dictionary to 1
             one_hot[idx][helper_dic[y_in]] = 1
 
-    # Define the cross-entropy loss function
-    def cross_entropy_loss(self, y_pred, y_true):
-        num_examples = y_pred.shape[0]
-        # one hot array for a batch
-        y_true_onehot = self.one_hot_encoder(y_true)
-        loss = -np.mean(y_true_onehot * np.log(y_pred + 1e-10))
-        return loss
 
     # Each step will take in a batch of information
     def train_step(self, batch):
