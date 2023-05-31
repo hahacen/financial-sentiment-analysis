@@ -186,8 +186,6 @@ class classify():
             tokenized_descriptions[i] = ' '.join(tokens)
             # tokenized_descriptions._append(' '.join(tokens))
 
-        tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-chinese')
-        model = transformers.TFBertForSequenceClassification.from_pretrained('bert-base-chinese')
         df['tokenized_description'] = tokenized_descriptions
         print(tokenized_descriptions)
         # Save the updated DataFrame to a new CSV file
@@ -264,7 +262,8 @@ def print_csv(file_path):
 
 
 if __name__ == '__main__':
-    trainer = train(train.MLP,'train.csv')
+    model = train.MLP(4,3)
+    trainer = train.trainer('train.csv',model)
     classifer = classify('咨询titles.txt',2)
     classifer.debug()
     # classifer.run()
