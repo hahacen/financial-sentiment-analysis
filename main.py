@@ -173,6 +173,9 @@ class classify():
     def train_nn(self):
         model = train.MLP(4, self._num_clusters)
         params = model.init({"params": np.ones((4,))})
+
+        trainer = train.trainer('train.csv', model)
+        # abstract four values to list/array
         input_tensor =
         output_tensor = model.apply(params,input_tensor)
 
