@@ -12,11 +12,10 @@ from googletrans import Translator
 import nltk
 from nltk.corpus import wordnet
 import train
-
+import meta_parameters
 from nltk.sentiment import SentimentIntensityAnalyzer
 
-nltk.download('vader_lexicon')
-nltk.download('wordnet')
+
 from collections import OrderedDict
 
 import torch.nn as nn
@@ -27,7 +26,7 @@ import jieba
 import transformers
 import numpy as np
 import train
-
+import helper
 # Define the list of descriptions
 epsilon = 0.01
 _custom_lexicon = {
@@ -44,12 +43,11 @@ _custom_lexicon = {
 }
 
 
-
 class classify():
 
     def __init__(self, file_in, trainer_in, num_clusters=3, is_english=False, mode='simple'):
         self._file_path = file_in
-        self._file_in = _read_file(file_in)
+        self._file_in = helper._read_file(file_in)
         self._num_clusters = num_clusters
         self._is_english = is_english
         self.custom_lexicon()
@@ -80,8 +78,10 @@ class classify():
                 else:
                     key = parts[0]
                 value = parts[1]
+            else:
+                value = line
                 # Append the value to the list of values for the key
-                grouped_data[key].append(value)
+            grouped_data[key].append(value)
         # remove duplicate
         data_processed = [(key, ' '.join(values)) for key, values in grouped_data.items()]
         with open(csv_file, 'w', newline='') as file:
@@ -94,10 +94,10 @@ class classify():
 
     # customize sentiment lexicon with biased words
     def custom_lexicon(self):
-        self._custom_lexicon_ = _custom_lexicon_fn()
+        self._custom_lexicon_ = helper._custom_lexicon_fn()
 
     def score_calculator(self, text: str) -> dict[str, float]:
-        return _score_calculator(self._sia, text)
+        return helper._score_calculator(self._sia, text)
 
     def sentiment_ana(self):
         file = self._preprocessed
@@ -250,38 +250,6 @@ class classify():
         self.cluster()
         # self._autoencoder()
         # print_csv(self._preprocessed)
-
-
-def _score_calculator(sia, text: str) -> dict[str, float]:
-    return sia.polarity_scores(text)
-
-
-def _score_processor(dict: dict[str, float]) -> tuple[float, ...]:
-    return tuple(dict.values())
-
-
-def _custom_lexicon_fn():
-    custom_lexicon = _custom_lexicon
-    for word in list(custom_lexicon.keys()):
-        sentiment_score = custom_lexicon[word]
-        synonyms = []
-        for synset in wordnet.synsets(word):
-            for lemma in synset.lemmas():
-                synonyms.append(lemma.name())
-        for synonym in synonyms:
-            custom_lexicon[synonym] = sentiment_score
-    return custom_lexicon
-
-def _read_file(file_path):
-    with open(file_path, 'r') as file:
-        contents = file.read()
-    return contents
-
-def print_csv(file_path):
-    with open(file_path, 'r') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            print(row)
 
 
 if __name__ == '__main__':

@@ -23,11 +23,11 @@ class MLP(nn.Module):
 
 class trainer():
     # score shall be a list of tuple
-    def __init__(self, train_csv_path, score,
+    def __init__(self, train_csv_path,
                  model, learning_rate=0.01, batch_size=10):
         self.model = model
         # manually parse x and y for train
-        self.preprocess(train_csv_path, score)
+        self.preprocess(train_csv_path)
         self.optimizer = flax.optim.Adam(learning_rate=learning_rate).create(model)
         self.batch_size = batch_size
 
@@ -67,7 +67,6 @@ class trainer():
         for idx in range(self.batch_size):
             # set the index of dictionary to 1
             one_hot[idx][helper_dic[y_in]] = 1
-
 
     # Each step will take in a batch of information
     def train_step(self, batch):
