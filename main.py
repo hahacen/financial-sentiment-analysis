@@ -1,6 +1,6 @@
 # This is a sample Python script.
 import gensim
-from typing import Callable, Optional, Sequence
+from typing import Callable, Optional, Sequence, Tuple
 from gensim.corpora import Dictionary
 from gensim.models import LdaModel
 from pprint import pprint
@@ -30,7 +30,18 @@ import train
 
 # Define the list of descriptions
 epsilon = 0.01
-
+_custom_lexicon = {
+    'improvement': 2.0,
+    'highly recommend': 1.5,
+    'not good': -1.0,
+    'exceed expectations': 3,
+    'cost is high': -10,
+    'high growth': 5,
+    'big increase': 1,
+    'strong improvement': 10,
+    'rapid growth': 1,
+    'strong': 15
+}
 
 class classify():
 
@@ -87,18 +98,7 @@ class classify():
 
     # customize sentiment lexicon with biased words
     def cumstom_lexicon(self):
-        custom_lexicon = {
-            'improvement': 2.0,
-            'highly recommend': 1.5,
-            'not good': -1.0,
-            'exceed expectations': 3,
-            'cost is high': -10,
-            'high growth': 5,
-            'big increase': 1,
-            'strong improvement': 10,
-            'rapid growth': 1,
-            'strong': 15
-        }
+        custom_lexicon = _custom_lexicon
         for word in list(custom_lexicon.keys()):
             sentiment_score = custom_lexicon[word]
             synonyms = []
@@ -251,8 +251,6 @@ class classify():
         for description, label in zip(df['description'], cluster_labels):
             print(f"{description} - Cluster {label}")
 
-    # # List of stock descriptions
-
     def run(self):
         self.parsing()
         self.tokenize()
@@ -270,6 +268,10 @@ class classify():
 
 def _score_calculator(sia, text: str) -> dict[str, float]:
     return sia.polarity_scores(text)
+
+
+def _score_processor(dict: dict[str, float]) -> tuple[float, ...]:
+    return tuple(dict.values())
 
 
 def print_csv(file_path):

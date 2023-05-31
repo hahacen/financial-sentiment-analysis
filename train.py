@@ -22,6 +22,7 @@ class MLP(nn.Module):
 
 
 class trainer():
+    # score shall be a list of tuple
     def __init__(self, train_csv_path, score,
                  model, learning_rate=0.01, batch_size=10):
         self.model = model
@@ -30,7 +31,7 @@ class trainer():
         self.optimizer = flax.optim.Adam(learning_rate=learning_rate).create(model)
         self.batch_size = batch_size
 
-    def preprocess(self, csv_path, score):
+    def preprocess(self, csv_path):
         df = pd.read_csv(csv_path)
         temp_xTrain = score
         temp_yTrain = df[df['ORGAN_RATING_CONTENT'].isin(['强裂推荐', '强推', '谨慎推荐', '中性',
