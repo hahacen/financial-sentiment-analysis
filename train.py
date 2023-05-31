@@ -78,10 +78,14 @@ class trainer():
         def loss_fn(model):
             y_pred_logits = model(batch["x"])
             loss = tf.nn.softmax_cross_entropy_with_logits(y_pred_logits, self.one_hot_encoder(batch["y"]))
-            return loss
+            avg_loss = tf.reduce_mean(loss)
+            return avg_loss
 
         grad_fn = jax.value_and_grad(loss_fn)
+        # optimizer.target returns the parameter that need to be tuned
+        # target is a dict
         loss, grad = grad_fn(self.optimizer.target)
+        # update the parameters
         self.optimizer = self.optimizer.apply_gradient(grad)
         return loss
 

@@ -14,6 +14,7 @@ from nltk.corpus import wordnet
 import train
 
 from nltk.sentiment import SentimentIntensityAnalyzer
+
 nltk.download('vader_lexicon')
 nltk.download('wordnet')
 from collections import OrderedDict
@@ -26,11 +27,14 @@ import jieba
 import transformers
 import numpy as np
 import train
+
 # Define the list of descriptions
 epsilon = 0.01
+
+
 class classify():
 
-    def __init__(self, file_in, num_clusters, is_english=False):
+    def __init__(self, file_in, num_clusters = 3, is_english=False, mode = 'simple', trainer_in):
         self._file_path = file_in
         self._file_in = self._read_file(file_in)
         self._num_clusters = num_clusters
@@ -41,8 +45,13 @@ class classify():
         # update the sentiment lexicon
         sia.lexicon.update(self._custom_lexicon)
         self._sia = sia
+        # set to simple algorithm by default
+        self._mode = mode
+        # define the trained model
+        self._model = trainer_in
 
-    def _read_file(self,file_path):
+
+    def _read_file(self, file_path):
         with open(file_path, 'r') as file:
             contents = file.read()
         return contents
@@ -103,7 +112,7 @@ class classify():
 
     def score_calculator(self, text: str) -> dict[str, float]:
         return self._sia.polarity_scores(text)
-    
+
     def sentiment_ana(self):
         file = self._preprocessed
         df = pd.read_csv(file)
@@ -171,27 +180,17 @@ class classify():
         print("positive:")
         print(pos)
 
-
-
     # simple algorithm by multiplying compound and neg/pos/neu
     def compute_sentiment(self, senti_scores: dict[str, float]) -> float:
-        if senti_scores['compound']>0:
-            return senti_scores['pos']*senti_scores['compound'] - senti_scores['neu']* 0.05
+        if self._mode == 'simple':
+            if senti_scores['compound'] > 0:
+                return senti_scores['pos'] * senti_scores['compound'] - senti_scores['neu'] * 0.05
+            else:
+                return senti_scores['neg'] * senti_scores['compound'] + senti_scores['neu'] * 0.05
+        # by far the other choice is mlp neural network
         else:
-            return senti_scores['neg'] * senti_scores['compound'] + senti_scores['neu'] * 0.05
 
-
-    def train_nn(self):
-        model = train.MLP(4, self._num_clusters)
-        params = model.init({"params": np.ones((4,))})
-
-        trainer = train.trainer('train.csv', model)
-        # abstract four values to list/array
-        input_tensor = []
-
-        output_tensor = model.apply(params,input_tensor)
-
-    #use nn to train
+    # use nn to train
     def tokenize(self):
         file = self._preprocessed
         df = pd.read_csv(file)
@@ -221,13 +220,13 @@ class classify():
         padded_sequences = tf.keras.preprocessing.sequence.pad_sequences(
             sequences, maxlen=max_sequence_length, padding='post'
         )
-        self._padded= padded_sequences
+        self._padded = padded_sequences
         self._length = max_sequence_length
         return sequences
 
     def _autoencoder(self):
         input_dim = self._length
-        encoding_dim =16
+        encoding_dim = 16
         df = pd.read_csv(self._preprocessed)
         input_data = tf.keras.layers.Input(shape=(input_dim,))
         encoder = tf.keras.layers.Dense(encoding_dim, activation='relu')(input_data)
@@ -236,7 +235,7 @@ class classify():
         # use binary cross-entropy as loss function
         autoencoder.compile(loss='binary_crossentropy', optimizer='adam')
         autoencoder.fit(self._padded, self._padded, epochs=60, batch_size=16)
-        encoder_model = tf.keras.models.Model(input_data,encoder)
+        encoder_model = tf.keras.models.Model(input_data, encoder)
         embeddings = encoder_model.predict(self._padded)
 
         # Apply clustering algorithm,try K-means here
@@ -277,11 +276,10 @@ def print_csv(file_path):
 
 
 if __name__ == '__main__':
-    model = train.MLP(4,3)
-    trainer = train.trainer('train.csv',model)
-    classifer = classify('咨询titles.txt',2)
+    model = train.MLP(4, 3)
+    trainer = train.trainer('train.csv', model)
+    classifer = classify('咨询titles.txt', 3)
     classifer.debug()
     # classifer.run()
-
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
