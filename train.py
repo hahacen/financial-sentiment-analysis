@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 # from sklearn.preprocessing import OneHotEncoder
 import tensorflow_probability.python.internal.backend.jax.nn as jax_nn
-import tensorflow as tf
 
 
 # define the network
@@ -43,6 +42,7 @@ class trainer():
         self._y_train = y_train
         return x_train, y_train
 
+    # y_in should be one batch of information
     # y_in has the dimension: batch-size,string
     def one_hot_encoder(self, y_in) -> np.list:
         helper_dic = {
@@ -73,10 +73,10 @@ class trainer():
         loss = -np.mean(y_true_onehot * np.log(y_pred + 1e-10))
         return loss
 
+    # Each step will take in a batch of information
     def train_step(self, batch):
         def loss_fn(model):
             y_pred_logits = model(batch["x"])
-            # TODO:
             loss = tf.nn.softmax_cross_entropy_with_logits(y_pred_logits, self.one_hot_encoder(batch["y"]))
             return loss
 

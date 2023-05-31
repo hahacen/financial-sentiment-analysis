@@ -30,11 +30,12 @@ import train
 epsilon = 0.01
 class classify():
 
-    def __init__(self, file_in, num_clusters,):
+    def __init__(self, file_in, num_clusters, is_english=False):
         self._file_path = file_in
         self._file_in = self._read_file(file_in)
         self._num_clusters = num_clusters
-
+        self._is_english = is_english
+        self.cumstom_lexicon()
     def _read_file(self,file_path):
         with open(file_path, 'r') as file:
             contents = file.read()
@@ -75,10 +76,10 @@ class classify():
             'highly recommend': 1.5,
             'not good': -1.0,
             'exceed expectations': 3,
-            'cost is high': -2,
-            'high growth': 1,
+            'cost is high': -10,
+            'high growth': 5,
             'big increase': 1,
-            'strong improvement': 2,
+            'strong improvement': 10,
             'rapid growth': 1,
             'strong': 15
         }
@@ -93,20 +94,30 @@ class classify():
         self._custom_lexicon = custom_lexicon
         return custom_lexicon
 
+    def score_calculator(self, text: str) -> dict[str, float]:
+        sia = self._sia
+        sentiment_score = sia.polarity_scores(text)
+        return sentiment_score
+    
     def sentiment_ana(self):
         file = self._preprocessed
         df = pd.read_csv(file)
         sentiment_data = df['description']
         scores = []  # Array to store computed scores
         senti_array = []
+        # Initialize the sentiment analyzer
+        sia = SentimentIntensityAnalyzer()
+        # update the sentiment lexicon
+        sia.lexicon.update(self._custom_lexicon)
+        self._sia = sia
+
         for i, description in enumerate(sentiment_data):
-            translator = Translator()
-            translated_text = translator.translate(description, timeout=10)
-            # print(translated_text.text)
-            # Initialize the sentiment analyzer
-            sia = SentimentIntensityAnalyzer()
-            # update the sentiment lexicon
-            sia.lexicon.update(self._custom_lexicon)
+            # if it's english, then no need to translate it
+            if self._is_english:
+                translator = Translator()
+                translated_text = translator.translate(description, timeout=20)
+                # print(translated_text.text) #for debug use
+
             # Analyze the sentiment of the text
             sentiment_scores = sia.polarity_scores(translated_text.text)
             # Store the data into the csv
@@ -176,7 +187,8 @@ class classify():
 
         trainer = train.trainer('train.csv', model)
         # abstract four values to list/array
-        input_tensor =
+        input_tensor = []
+
         output_tensor = model.apply(params,input_tensor)
 
     #use nn to train
@@ -235,7 +247,7 @@ class classify():
         cluster_labels = kmeans.labels_
 
         # print(df['description'])
-    # Print the cluster labels
+        # Print the cluster labels
 
         for description, label in zip(df['description'], cluster_labels):
             print(f"{description} - Cluster {label}")
