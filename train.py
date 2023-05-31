@@ -39,6 +39,8 @@ class trainer:
         temp_yTrain = df[df['ORGAN_RATING_CONTENT'].isin(['强裂推荐', '强推', '谨慎推荐', '中性',
                                                           'sell', '卖出', 'SELL', 'Neutral', '减持', 'Reduce'])]
         y_t = temp_yTrain['ORGAN_RATING_CONTENT']
+
+        # output a csv file with cols of stock and descriptions
         x_train_csv = helper.parsing(csv_path)
         x_train_descriptions = x_train_csv['description']
 
