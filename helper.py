@@ -1,5 +1,55 @@
 import meta_parameters
 import csv
+import pandas as pd
+
+# TODO: not sure if csv needed to be read the path
+# file in is either txt or csv
+def parsing(file_in, mode='pred'):
+    # Use a default-dict to group values by key
+    from collections import defaultdict
+    grouped_data = defaultdict(list)
+
+    # in prediction mode
+    if mode == 'pred':
+        txt_file = file_in
+        csv_file = 'preprocessesd_pred.csv'
+        lines = txt_file.split('\n')
+        for line in lines:
+            if '：' in line:
+                parts = line.split('：')
+                if len(parts[0]) >= 4:
+                    key = parts[0][:4]
+                else:
+                    key = parts[0]
+                value = parts[1]
+                # Append the value to the list of values for the key
+                grouped_data[key].append(value)
+    # in train mode
+    else:
+        cvs_in = pd.read_csv(file_in)
+        csv_file = 'preprocessesd_train.csv'
+        titles = cvs_in['TITLE'].tolist()
+        stocks = cvs_in['STOCK_NAME'].tolist()
+        # TODO: not sure if zip works here
+        for line, stock in zip(titles, stocks):
+            key = stock
+            if '：' in line:
+                parts = line.split('：')
+                value = parts[1]
+            else:
+                value = line
+                # Append the value to the list of values for the key
+            grouped_data[key].append(value)
+
+    # remove duplicate
+    data_processed = [(key, ' '.join(values)) for key, values in grouped_data.items()]
+    with open(csv_file, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['stock', 'description'])
+        for entry in data_processed:
+            writer.writerow(entry)
+
+    return csv_file
 
 
 def _score_calculator(sia, text: str) -> dict[str, float]:
