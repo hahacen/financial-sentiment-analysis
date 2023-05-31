@@ -34,7 +34,7 @@ epsilon = 0.01
 
 class classify():
 
-    def __init__(self, file_in, num_clusters = 3, is_english=False, mode = 'simple', trainer_in):
+    def __init__(self, file_in, trainer_in, num_clusters = 3, is_english=False, mode = 'simple'):
         self._file_path = file_in
         self._file_in = self._read_file(file_in)
         self._num_clusters = num_clusters
@@ -111,7 +111,7 @@ class classify():
         return custom_lexicon
 
     def score_calculator(self, text: str) -> dict[str, float]:
-        return self._sia.polarity_scores(text)
+        return _score_calculator(self._sia, text)
 
     def sentiment_ana(self):
         file = self._preprocessed
@@ -189,8 +189,8 @@ class classify():
                 return senti_scores['neg'] * senti_scores['compound'] + senti_scores['neu'] * 0.05
         # by far the other choice is mlp neural network
         else:
+            return self._model(list(senti_scores.values()))
 
-    # use nn to train
     def tokenize(self):
         file = self._preprocessed
         df = pd.read_csv(file)
@@ -268,6 +268,10 @@ class classify():
         # print_csv(self._preprocessed)
 
 
+def _score_calculator(sia, text: str) -> dict[str, float]:
+    return sia.polarity_scores(text)
+
+
 def print_csv(file_path):
     with open(file_path, 'r') as file:
         csv_reader = csv.reader(file)
@@ -278,7 +282,7 @@ def print_csv(file_path):
 if __name__ == '__main__':
     model = train.MLP(4, 3)
     trainer = train.trainer('train.csv', model)
-    classifer = classify('咨询titles.txt', 3)
+    classifer = classify('咨询titles.txt', trainer)
     classifer.debug()
     # classifer.run()
 

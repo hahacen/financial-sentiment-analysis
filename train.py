@@ -25,7 +25,7 @@ class trainer():
     def __init__(self, train_csv_path, score,
                  model, learning_rate=0.01, batch_size=10):
         self.model = model
-        # TODO: manually parse x and y for train
+        # manually parse x and y for train
         self.preprocess(train_csv_path, score)
         self.optimizer = flax.optim.Adam(learning_rate=learning_rate).create(model)
         self.batch_size = batch_size
