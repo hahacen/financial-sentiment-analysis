@@ -1,6 +1,7 @@
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
-import helper
+import jax
+
 from nltk.corpus import wordnet
 # training set for sentiment evaluation
 nltk.download('vader_lexicon')
@@ -18,11 +19,12 @@ _custom_lexicon = {
     'big increase': 1,
     'strong improvement': 10,
     'rapid growth': 1,
-    'strong': 15
+    'strong': 15,
+    'accelerated release period of performance': 15,
+    'completed': 10,
+    'leader': 10
 }
-
+rng = jax.random.PRNGKey(0)
 # choose the sentiment analyzer
 # it may be used by other framework
 sia = SentimentIntensityAnalyzer()
-# update the sentiment lexicon
-sia.lexicon.update(helper._custom_lexicon_fn())

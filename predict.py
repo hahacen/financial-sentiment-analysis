@@ -61,14 +61,9 @@ class predictor():
         senti_array = []
 
         for i, description in enumerate(sentiment_data):
-            # if it's english, then no need to translate it
-            if self._is_english:
-                translator = Translator()
-                description = translator.translate(description, timeout=20)
-                # print(translated_text.text) #for debug use
 
             # Analyze the sentiment of the text
-            sentiment_scores = self.score_calculator(description.text)
+            sentiment_scores = self.score_calculator(description.text,self._is_english)
             # Store the data into the csv
             computed_score = self.compute_sentiment(sentiment_scores)
             scores.append(computed_score)
