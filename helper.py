@@ -61,6 +61,10 @@ def _score_processor(dict: dict[str, float]) -> tuple[float, ...]:
     return tuple(dict.values())
 
 
+def score_tuple(text: str, sia=meta_parameters.sia):
+    return _score_processor(_score_calculator(sia, text))
+
+
 def _custom_lexicon_fn():
     custom_lexicon = meta_parameters._custom_lexicon
     for word in list(custom_lexicon.keys()):

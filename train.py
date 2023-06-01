@@ -38,23 +38,23 @@ class trainer:
         df = pd.read_csv(csv_path)
         temp_yTrain = df[df['ORGAN_RATING_CONTENT'].isin(['强裂推荐', '强推', '谨慎推荐', '中性',
                                                           'sell', '卖出', 'SELL', 'Neutral', '减持', 'Reduce'])]
-        y_t = temp_yTrain['ORGAN_RATING_CONTENT']
+        y_t = temp_yTrain['ORGAN_RATING_CONTENT'].tolist()
 
         # return a csv file with cols of stock and descriptions
         x_train_csv = helper.parsing(csv_path)
         x_train_descriptions = x_train_csv['description'].tolist()
         x = []
         for description in x_train_descriptions:
-            
+            x_num = helper.score_tuple(description.txt)
+            x.append(x_num)
 
-        # for
-        y_train = self.one_hot_encoder(y_t.tolist())
+        y = self.one_hot_encoder(y_t)
         self._x_train = x
-        self._y_train = y_train
-        return x, y_train
+        self._y_train = y
+        return x, y
 
-    # y_in should be one batch of information
-    # y_in has the dimension: batch-size,string
+    # this encoder deal with all the sample data
+    # shape: sample_size, str
     def one_hot_encoder(self, y_in) -> np.list:
         helper_dic = {
             "强裂推荐": 1,
@@ -71,10 +71,10 @@ class trainer:
 
         # this is the one_hot two-dimensional array of one batch
         # 3 is the num of categories
-        one_hot = np.zeros(self.batch_size, 3)
-        for idx in range(self.batch_size):
+        one_hot = np.zeros(y_in.shape[0], 3)
+        for idx in range(y_in.shape[0]):
             # set the index of dictionary to 1
-            one_hot[idx][helper_dic[y_in]] = 1
+            one_hot[idx][helper_dic[y_in[idx]]+1] = 1
 
     # Each step will take in a batch of information
     def train_step(self, batch):

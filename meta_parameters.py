@@ -1,6 +1,7 @@
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import helper
+from nltk.corpus import wordnet
 # training set for sentiment evaluation
 nltk.download('vader_lexicon')
 nltk.download('wordnet')
