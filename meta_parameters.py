@@ -1,4 +1,6 @@
 import nltk
+from nltk.sentiment import SentimentIntensityAnalyzer
+import helper
 # training set for sentiment evaluation
 nltk.download('vader_lexicon')
 nltk.download('wordnet')
@@ -17,3 +19,9 @@ _custom_lexicon = {
     'rapid growth': 1,
     'strong': 15
 }
+
+# choose the sentiment analyzer
+# it may be used by other framework
+sia = SentimentIntensityAnalyzer()
+# update the sentiment lexicon
+sia.lexicon.update(helper._custom_lexicon_fn())

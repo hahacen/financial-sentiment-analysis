@@ -40,16 +40,18 @@ class trainer:
                                                           'sell', '卖出', 'SELL', 'Neutral', '减持', 'Reduce'])]
         y_t = temp_yTrain['ORGAN_RATING_CONTENT']
 
-        # output a csv file with cols of stock and descriptions
+        # return a csv file with cols of stock and descriptions
         x_train_csv = helper.parsing(csv_path)
-        x_train_descriptions = x_train_csv['description']
-
+        x_train_descriptions = x_train_csv['description'].tolist()
         x = []
+        for description in x_train_descriptions:
+            
+
         # for
         y_train = self.one_hot_encoder(y_t.tolist())
-        self._x_train = x_train
+        self._x_train = x
         self._y_train = y_train
-        return x_train, y_train
+        return x, y_train
 
     # y_in should be one batch of information
     # y_in has the dimension: batch-size,string

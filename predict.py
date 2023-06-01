@@ -36,11 +36,7 @@ class predictor():
         self._num_clusters = num_clusters
         self._is_english = is_english
         self.custom_lexicon()
-        # Initialize the sentiment analyzer
-        sia = SentimentIntensityAnalyzer()
-        # update the sentiment lexicon
-        sia.lexicon.update(self._custom_lexicon_)
-        self._sia = sia
+        self._sia = meta_parameters.sia
         # set to simple algorithm by default
         self._mode = mode
         # define the trained model
