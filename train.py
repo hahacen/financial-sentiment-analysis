@@ -65,8 +65,8 @@ class trainer:
             # print(description)
             # print(count)
             x_num = helper.score_tuple(text0)
-            # print(x_num)
-            # print(description)
+            print(x_num)
+            print(description)
             count = count +1
             if count > 20:
                 break
@@ -138,11 +138,11 @@ class trainer:
         # print(f"x_train shape: {self._x_train.shape[0]}")
         for epoch in range(num_epochs):
             epoch_loss = 0.0
-            for step in range(1, total_steps+1):
+            for step in range(1, total_steps):
                 batch = self._batch_sampler()
                 loss = self.train_step(batch)
                 epoch_loss += loss
-                print(f"loss: {loss}")
-                print(f"epoch_loss: {epoch_loss}")
-            print(f"total_steps: {total_steps}")
+                # print(f"loss: {loss}")
+                # print(f"epoch_loss: {epoch_loss}")
+            # print(f"total_steps: {total_steps}")
             print(f"Epoch {epoch + 1} Loss: {epoch_loss / total_steps}")
