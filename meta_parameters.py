@@ -10,15 +10,15 @@ nltk.download('wordnet')
 epsilon = 0.01
 learning_rate = 0.01
 _custom_lexicon = {
-    'improvement': 2.0,
-    'highly recommend': 1.5,
-    'not good': -1.0,
-    'exceed expectations': 3,
+    'improvement': 5.0,
+    'highly recommend': 10.5,
+    'not good': -10.0,
+    'exceed expectations': 10,
     'cost is high': -10,
     'high growth': 5,
-    'big increase': 1,
+    'big increase': 10,
     'strong improvement': 10,
-    'rapid growth': 1,
+    'rapid growth': 5,
     'strong': 15,
     'accelerated release period of performance': 15,
     'completed': 10,

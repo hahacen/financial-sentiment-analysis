@@ -6,8 +6,6 @@ from googletrans import Translator
 from collections import defaultdict
 
 
-# TODO: not sure if csv needed to be read the path
-
 # file in is either txt or csv
 def parsing(file_in, mode='train'):
     grouped_data = defaultdict(list)
@@ -81,6 +79,7 @@ def score_tuple(text: str, sia=meta_parameters.sia):
     return _score_processor(_score_calculator(sia, text))
 
 
+# TODO: this lexicon maybe learnt instead of set by hand
 def _custom_lexicon_fn():
     custom_lexicon = meta_parameters._custom_lexicon
     for word in list(custom_lexicon.keys()):
