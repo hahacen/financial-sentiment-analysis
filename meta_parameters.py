@@ -2,6 +2,8 @@ import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import jax
 
+# TODO: add weight on the words that appears more time, +label*(some value), learn the weights instead of do it myself
+# TODO: try rnn to train the lexicon myself in Chinese, (labeled needed? Can we have unsupervised learning?)
 from nltk.corpus import wordnet
 # training set for sentiment evaluation
 nltk.download('vader_lexicon')
