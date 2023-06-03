@@ -10,7 +10,7 @@ nltk.download('vader_lexicon')
 nltk.download('wordnet')
 
 epsilon = 0.01
-learning_rate = 0.01
+learning_rate = 5e-5
 _custom_lexicon = {
     'improvement': 5.0,
     'highly recommend': 10.5,
@@ -24,7 +24,8 @@ _custom_lexicon = {
     'strong': 15,
     'accelerated release period of performance': 15,
     'completed': 10,
-    'leader': 10
+    'leader': 10,
+    'pressure': -10
 }
 rng = jax.random.PRNGKey(0)
 # choose the sentiment analyzer

@@ -14,6 +14,7 @@ from googletrans import Translator
 from deep_translator import GoogleTranslator
 from collections import defaultdict
 
+
 # define the network
 class MLP(nn.Module):
     def setup(self):

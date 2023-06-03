@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="d12b65f7-7a9b-42a4-a3da-97ad0fd5a3f6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/labeled_data.txt" beforeDir="false" afterPath="$PROJECT_DIR$/labeled_data.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meta_parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/meta_parameters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -223,7 +225,7 @@
       <updated>1685349590225</updated>
       <workItem from="1685349592027" duration="42296000" />
       <workItem from="1685521413295" duration="6863000" />
-      <workItem from="1685540992682" duration="71807000" />
+      <workItem from="1685540992682" duration="77328000" />
     </task>
     <servers />
   </component>
@@ -235,19 +237,19 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/train.py</url>
-          <line>121</line>
+          <line>122</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <condition expression="epoch == 7" language="Python" />
           <url>file://$PROJECT_DIR$/train.py</url>
-          <line>139</line>
+          <line>140</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/classify$main.coverage" NAME="main Coverage Results" MODIFIED="1685690811690" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/classify$main.coverage" NAME="main Coverage Results" MODIFIED="1685698088275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
