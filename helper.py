@@ -25,8 +25,13 @@ def parsing(file_in, mode='train'):
                 value = parts[1]
                 # Append the value to the list of values for the key
                 grouped_data[key].append(value)
+                # if len(grouped_data) > 5:
+                #     break
+        # remove duplicate
+        data_processed = [(key, ' '.join([value for value in values])) for key, values in grouped_data.items()]
+
     # in train mode
-    else:
+    elif mode == 'train':
         cvs_in = pd.read_csv(file_in)
         cvs_filtered = cvs_in[cvs_in['ORGAN_RATING_CONTENT'].isin(['强裂推荐', '强推', '谨慎推荐', '中性',
                                                                    'sell', '卖出', 'SELL', 'Neutral', '减持',
@@ -45,10 +50,11 @@ def parsing(file_in, mode='train'):
                 value = title
                 # Append the value to the list of values for the key
             grouped_data[key].append((value, level))
+            # remove duplicate
+            data_processed = [(key, ' '.join([value[0] for value in values]), [value[1] for value in values][0])
+                              for key, values in grouped_data.items()]
 
-    # remove duplicate
-    data_processed = [(key, ' '.join([value[0] for value in values]), [value[1] for value in values][0])
-                      for key, values in grouped_data.items()]
+    print("parsing")
     print(data_processed)
     with open(csv_file, 'w', newline='') as file:
         writer = csv.writer(file)

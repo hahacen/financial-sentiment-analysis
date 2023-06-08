@@ -49,6 +49,9 @@ class trainer:
         self.batch_size = batch_size
         self.psng_key = PSNG
 
+    def __call__(self, x):
+        y_pred_softmax_logits = self.model.apply(self.optimizer.target, x)
+        return y_pred_softmax_logits
     def preprocess(self, csv_path):
         train_csv = helper.parsing(csv_path)
         df = pd.read_csv(train_csv)
@@ -62,11 +65,11 @@ class trainer:
             if len(description) > 100:
                 description = description[:100]
             text0 = translator.translate(description)
-            # print(text0)  # for debug use
             # print(description)
             # print(count)
             x_num = helper.score_tuple(text0)
             print(x_num)
+            print(text0)  # for debug use
             print(description)
             count = count +1
             if count > 20:
@@ -82,19 +85,7 @@ class trainer:
     # this encoder deal with all the sample data
     # shape: sample_size, str
     def one_hot_encoder(self, y_in) -> np.array:
-        helper_dic = {
-            "强裂推荐": 1,
-            "强推": 1,
-            "谨慎推荐": 0,
-            "中性": 0,
-            "sell": -1,
-            "卖出": -1,
-            "SELL": -1,
-            "Neutral": 0,
-            "减持": -1,
-            "Reduce": -1
-        }
-
+        helper_dic = meta_parameters.helper_dic
         # this is the one_hot two-dimensional array of one batch
         # 3 is the num of categories
         one_hot = np.zeros((y_in.shape[0], 3))

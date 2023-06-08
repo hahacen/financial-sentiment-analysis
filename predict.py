@@ -26,6 +26,7 @@ import transformers
 import numpy as np
 import helper
 import meta_parameters
+from deep_translator import GoogleTranslator
 
 
 
@@ -42,8 +43,9 @@ class predictor():
         # define the trained model
         self._model = trainer_in
 
+
     def parsing(self):
-        self._preprocessed = helper.parsing(self._file_in)
+        self._preprocessed = helper.parsing(self._file_in, mode='pred')
         return self._preprocessed
 
     # customize sentiment lexicon with biased words
@@ -53,30 +55,61 @@ class predictor():
     def score_calculator(self, text: str) -> dict[str, float]:
         return helper._score_calculator(self._sia, text)
 
+    def group(self,dict_in):
+        pos = dict_in['pos']
+        neg = dict_in['neg']
+        if abs(pos-neg ) < 0.1:
+            self._dic['ambiguous'].append()
+
     def sentiment_ana(self):
         file = self._preprocessed
         df = pd.read_csv(file)
         sentiment_data = df['description']
+        stocks = df['stock']
         scores = []  # Array to store computed scores
         senti_array = []
-
+        dict = {'neg': [], 'pos': [], 'ambiguous': [], 'pos+': [], 'neu': []}
+        self._dic = dict
         for i, description in enumerate(sentiment_data):
-
+            translator = GoogleTranslator(source='auto', target='en')
+            if len(description) > 100:
+                description = description[:100]
+            text0 = translator.translate(description)
             # Analyze the sentiment of the text
-            sentiment_scores = self.score_calculator(description.text,self._is_english)
+            sentiment_scores = self.score_calculator(text0)
+
+            pos = sentiment_scores['pos']
+            neg = sentiment_scores['neg']
+            neu = sentiment_scores['neu']
+            if abs(pos - neg) < 0.1 and (pos > 0.1 or neg > 0.1):
+                dict['ambiguous'].append(stocks.loc[i])
+            elif neg > 0.1:
+                dict['neg'].append(stocks.loc[i])
+            elif pos > 0.5:
+                dict['pos+'].append(stocks.loc[i])
+            elif neu > 0.8 and (pos < 0.1 or neg < 0.1):
+                dict['neu'].append(stocks.loc[i])
+            elif pos > 0.1:
+                dict['pos'].append(stocks.loc[i])
+            elif pos > 0.1 and neg > 0.1:
+                dict['ambiguous'].append(stocks.loc[i])
+            else:
+                dict['ambiguous'].append(stocks.loc[i])
             # Store the data into the csv
-            computed_score = self.compute_sentiment(sentiment_scores)
+            computed_score = self.compute_sentiment(sentiment_scores,)
             scores.append(computed_score)
             senti_array.append(sentiment_scores)
             sentiment_data[i] = computed_score
             # Print the sentiment scores, for debug use
-            # print(sentiment_scores)
+            print(sentiment_scores)
+            print(stocks.loc[i])
             # print(computed_score)
             # for debug use
             if i > 50:
                 break
             self._score = scores
             self._senti_array = senti_array
+        print(dict)
         return
 
     def sort_result(self):
@@ -97,6 +130,7 @@ class predictor():
         sorted_array = sorted(labled_array,
                               key=lambda x: x[0])
         for x in sorted_array:
+            # print(x)
             print(x)
         self._sorted_array = sorted_array
         return sorted_array
@@ -118,13 +152,21 @@ class predictor():
     # simple algorithm by multiplying compound and neg/pos/neu
     def compute_sentiment(self, senti_scores: dict[str, float]) -> float:
         if self._mode == 'simple':
+            # pos = senti_scores['pos']
+            # neg = senti_scores['neg']
+            # neu = senti_scores['neu']
+            # comp = senti_scores['compound']
+            # result = pos*pos+neg*neg
             if senti_scores['compound'] > 0:
                 return senti_scores['pos'] * senti_scores['compound'] - senti_scores['neu'] * 0.05
             else:
                 return senti_scores['neg'] * senti_scores['compound'] + senti_scores['neu'] * 0.05
         # by far the other choice is mlp neural network
         else:
-            return self._model(list(senti_scores.values()))
+            y_pred = self._model(list(senti_scores.values()))
+            print("print compute_sentiment")
+            print(y_pred)
+            return y_pred
 
     def tokenize(self):
         file = self._preprocessed
@@ -193,9 +235,10 @@ class predictor():
 
     def debug(self):
         self.parsing()
-        self.custom_lexicon()
+        # self.custom_lexicon()
         self.sentiment_ana()
-        self.sort_result()
-        self.cluster()
+        # self.sort_result()
+        # self.sort_result()
+        # self.cluster()
         # self._autoencoder()
         # print_csv(self._preprocessed)
